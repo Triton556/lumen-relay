@@ -1,0 +1,11 @@
+{
+  "name": "lumen-relay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs qa/*.mjs",
+    "dev": "node server.mjs"
+  }
+}
