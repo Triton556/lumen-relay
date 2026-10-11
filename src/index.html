@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071326" />
+    <meta
+      name="description"
+      content="Lumen Relay — маленькое путешествие о свете. Шесть парящих садов, живые призмы и потерянное созвездие."
+    />
+    <title>Lumen Relay · Хранитель света</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <canvas
+      id="world"
+      aria-label="Парящие сады Lumen Relay. Используй клавиши WASD или стрелки для движения, E для действия, пробел для рывка."
+    ></canvas>
+    <div id="grain" aria-hidden="true"></div>
+    <header id="hud" class="hidden">
+      <div class="level-info">
+        <div class="eyebrow" id="chapter">САД 01 / 06</div>
+        <h1 id="level-name">Пробуждение</h1>
+        <p id="objective">Зажги реле · 0 / 2</p>
+        <button id="camera-btn" class="camera-button hidden" aria-pressed="false">Весь сад</button>
+      </div>
+      <div class="hud-right">
+        <div class="wisp-count" title="Огоньки памяти">
+          <span class="wisp-icon"
+            ><svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5Z" /></svg></span
+          ><span id="wisp-count">0 / 3</span>
+        </div>
+        <button class="icon-button" id="sound-btn" aria-label="Выключить звук" title="Звук">
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m4 9 4 0 5-4v14l-5-4H4zM17 8a6 6 0 0 1 0 8" />
+          </svg></button
+        ><button class="icon-button" id="pause-btn" aria-label="Пауза" title="Пауза · Esc">
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5v14M16 5v14" stroke-width="3" />
+          </svg>
+        </button>
+      </div>
+    </header>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <div id="game-bottom" class="hidden">
+      <div class="status-pill" id="carry-state">
+        <span class="status-dot"></span><span>Найди источник света</span>
+      </div>
+      <button id="interact-prompt" class="interact-prompt hidden"><kbd>E</kbd><span></span></button>
+      <div class="desktop-help">
+        <span><kbd>WASD</kbd><kbd>стрелки</kbd> движение</span><span><kbd>Пробел</kbd> рывок</span
+        ><span><kbd>R</kbd> к источнику</span>
+      </div>
+      <div class="dash-meter">
+        <span>РЫВОК</span>
+        <div><i id="dash-fill"></i></div>
+      </div>
+    </div>
+    <div id="touch-controls" class="hidden">
+      <div id="joystick" role="group" aria-label="Сенсорное управление движением">
+        <div class="stick-ring"></div>
+        <div id="stick-thumb"></div>
+      </div>
+      <div class="touch-actions">
+        <button id="touch-dash" aria-label="Рывок">
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 18 18 6M6 6h12v12" /></svg
+          ><small>рывок</small></button
+        ><button id="touch-interact" aria-label="Действие">
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5Z" /></svg
+          ><small>действие</small>
+        </button>
+      </div>
+    </div>
+    <main id="title-screen" class="screen title-screen">
+      <div class="brand-line">
+        <span class="brand-mark"
+          ><svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M12 1v5m0 12v5M1 12h5m12 0h5M4.2 4.2l3.5 3.5m8.6 8.6 3.5 3.5M4.2 19.8l3.5-3.5m8.6-8.6 3.5-3.5"
+            /></svg></span
+        ><span>НЕБОЛЬШОЕ ПУТЕШЕСТВИЕ О СВЕТЕ</span
+        ><span class="edition" id="edition-count">01 — 06</span>
+      </div>
+      <section class="title-content">
+        <div class="eyebrow">В темноте всегда есть начало</div>
+        <h1>LUMEN<br /><em>RELAY</em><span class="title-orbit" aria-hidden="true"></span></h1>
+        <h2>Хранитель света</h2>
+        <p class="intro">
+          Собери искры. Пробуди парящие сады.<br />Верни ночному небу его созвездие.
+        </p>
+        <div class="title-actions">
+          <button id="play-btn" class="primary">
+            Начать путешествие
+            <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 18 18 6M6 6h12v12" />
+            </svg></button
+          ><button id="levels-btn" class="text-button">
+            Выбрать сад
+            <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+        <p id="title-storage-warning" class="storage-warning hidden" role="status">
+          Прогресс не сохраняется: браузер ограничил хранилище. Можно играть, пока открыта вкладка.
+        </p>
+        <div class="title-details">
+          <span id="garden-count">6 созданных вручную садов</span
+          ><span>Без спешки. Без потерь.</span>
+        </div>
+      </section>
+      <div class="title-footer">
+        <span>СВЕТ НАЧИНАЕТСЯ С ТЕБЯ</span
+        ><button id="title-settings" class="text-button">
+          Настройки
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="7" />
+            <circle cx="12" cy="12" r="2" />
+            <path d="M12 2v3m0 14v3M2 12h3m14 0h3" />
+          </svg>
+        </button>
+      </div>
+      <div class="scene-caption">
+        <span class="tiny-line"></span
+        ><span id="scene-caption-text">01 / САД ЗАБЫТОГО РАССВЕТА</span>
+      </div>
+    </main>
+    <section
+      id="pause-screen"
+      class="screen modal-screen hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pause-heading"
+    >
+      <div class="glass-card">
+        <div class="eyebrow">Мир может подождать</div>
+        <h2 id="pause-heading">Тихая пауза</h2>
+        <p>Все зажжённые огни на месте.</p>
+        <p id="pause-storage-warning" class="storage-warning hidden" role="status">
+          Прогресс не сохраняется: браузер ограничил хранилище. Можно играть, пока открыта вкладка.
+        </p>
+        <aside class="pause-guide">
+          <strong id="pause-objective"></strong>
+          <p id="pause-tip"></p>
+          <p id="pause-collection"></p>
+        </aside>
+        <div class="stack-actions">
+          <button id="resume-btn" class="primary">
+            Продолжить
+            <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg></button
+          ><button id="recall-btn" class="secondary">Вернуться к последнему огню</button
+          ><button id="results-btn" class="secondary hidden">Итоги сада</button
+          ><button id="restart-btn" class="secondary">Начать этот сад заново</button
+          ><button id="photo-btn" class="secondary">Снимок сада</button
+          ><button id="pause-settings" class="secondary">Настройки</button
+          ><button id="menu-btn" class="text-button">К выбору путешествия</button>
+        </div>
+        <p class="small-note">
+          Esc — вернуться · E — действие · Пробел — рывок<br />R — вернуться к последнему огню
+        </p>
+      </div>
+    </section>
+    <section
+      id="photo-screen"
+      class="screen hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Снимок сада"
+    >
+      <div class="photo-bar">
+        <p id="photo-status" role="status" aria-live="polite"></p>
+        <div class="photo-actions">
+          <button id="photo-export" class="primary">Сохранить PNG</button>
+          <button id="photo-back" class="secondary">К паузе · Esc</button>
+        </div>
+      </div>
+    </section>
+    <section
+      id="settings-screen"
+      class="screen modal-screen hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-heading"
+    >
+      <div class="glass-card">
+        <div class="eyebrow">Пусть тебе будет удобно</div>
+        <h2 id="settings-heading">Настройки</h2>
+        <label class="setting-row"
+          ><span>Звук<span class="setting-description">Мягкий синтезированный эмбиент</span></span
+          ><input id="sound-setting" type="checkbox" checked /></label
+        ><label class="setting-row"
+          ><span
+            >Меньше движения<span class="setting-description"
+              >Спокойные эффекты и частицы</span
+            ></span
+          ><input id="motion-setting" type="checkbox" /></label
+        ><label class="setting-row"
+          ><span
+            >Свечение<span class="setting-description"
+              >Для плавности на слабых устройствах</span
+            ></span
+          ><select id="quality-setting">
+            <option value="high">Полное</option>
+            <option value="low">Лёгкое</option>
+          </select></label
+        ><label class="setting-row"
+          ><span
+            >Диагностика<span class="setting-description"
+              >Частота кадров и время отрисовки · F3</span
+            ></span
+          ><input id="diagnostics-setting" type="checkbox" /></label
+        ><button id="settings-back" class="primary">
+          Готово
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
+        <p id="settings-storage-warning" class="storage-warning hidden" role="status">
+          Прогресс не сохраняется: браузер ограничил хранилище. Можно играть, пока открыта вкладка.
+        </p>
+        <p id="settings-save-note" class="small-note">Прогресс сохраняется в этом браузере.</p>
+      </div>
+    </section>
+    <section
+      id="levels-screen"
+      class="screen modal-screen hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="levels-heading"
+    >
+      <div class="glass-card level-card">
+        <div class="eyebrow">Одна искра — целый мир</div>
+        <h2 id="levels-heading">Парящие сады</h2>
+        <button id="levels-continue" class="secondary hidden" disabled>
+          Продолжить текущий сад
+        </button>
+        <p id="levels-replay-note" class="small-note"></p>
+        <div id="level-list"></div>
+        <button id="levels-back" class="text-button">Назад</button>
+      </div>
+    </section>
+    <section
+      id="complete-screen"
+      class="screen modal-screen hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="complete-heading"
+    >
+      <div class="glass-card completion-card">
+        <div class="completion-emblem" aria-hidden="true">
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M12 1v5m0 12v5M1 12h5m12 0h5M4.2 4.2l3.5 3.5m8.6 8.6 3.5 3.5M4.2 19.8l3.5-3.5m8.6-8.6 3.5-3.5"
+            />
+          </svg>
+        </div>
+        <div class="eyebrow" id="complete-kicker">Сад снова дышит</div>
+        <h2 id="complete-heading">Свет вернулся</h2>
+        <p id="complete-note"></p>
+        <p id="complete-invitation" class="completion-invitation"></p>
+        <p class="small-note">В ЭТОМ ПУТЕШЕСТВИИ ПО САДУ</p>
+        <p id="complete-storage-warning" class="storage-warning hidden" role="status">
+          Прогресс не сохраняется: браузер ограничил хранилище. Можно играть, пока открыта вкладка.
+        </p>
+        <div class="complete-stats">
+          <div><strong id="stat-wisps">3 / 3</strong><span>ОГОНЬКИ ПАМЯТИ</span></div>
+          <div><strong id="stat-blooms">0 / 2</strong><span>ПРОБУЖДЕНО ЦВЕТОВ</span></div>
+          <div><strong id="stat-time">02:40</strong><span>ДО ВОССТАНОВЛЕНИЯ</span></div>
+        </div>
+        <button id="next-btn" class="primary">
+          Следующий сад
+          <svg class="vector-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg></button
+        ><button id="stay-btn" class="secondary">Остаться в саду</button
+        ><button id="complete-menu" class="text-button">К парящим садам</button>
+      </div>
+    </section>
+    <div id="diagnostics" class="hidden" aria-live="off"></div>
+    <div id="fatal" class="hidden" role="alert">
+      Не удалось запустить игру. Попробуй обновить страницу в современном браузере.
+    </div>
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>
