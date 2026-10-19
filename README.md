@@ -2,9 +2,13 @@
 
 A cozy light-puzzle adventure in six overgrown floating gardens.
 
-An original, self-contained isometric browser adventure about sharing light. A small porcelain keeper restores six floating gardens: carrying sparks, aligning prisms, timing gentle pulses, awakening flowers, and joining paired wind chimes. The Russian-language UI and all art/audio are local and procedural.
+<!-- Gameplay hero pending: capture 10–15 seconds from the actual game in docs/media/ when a browser is available. -->
 
-No accounts, backend, analytics, third-party assets, runtime CDN requests, or personal information.
+[Live demo](https://triton556.github.io/lumen-relay/) — deployment pending; this URL becomes available after the Pages workflow is enabled and completes.
+
+**Stack:** JavaScript · Canvas 2D · Web Audio · HTML · CSS · Node.js development tools
+
+**My role:** Danil Volodin — directed the AI-assisted browser-game experiment with Rumi, including playthrough and refinement.
 
 ## Develop and run
 
@@ -20,6 +24,14 @@ npm test
 - Dev serves `dist/` at http://127.0.0.1:4173 and binds only the local loopback interface. In an environment where command sessions have isolated loopback networks, run the server in the browser's own supported environment.
 - Tests include deterministic routes, storage/lifecycle checks, rendering geometry, audio lifecycle, timing invariants, and seeded randomized actions.
 - Deploy `dist/` as a static website. No runtime package installation is needed.
+- The Pages workflow builds and tests on pushes to `main` or manual dispatch. After pushing, select **GitHub Actions** as the Pages source in repository settings. Deployment is not enabled by this documentation change.
+- HTML, stylesheet and module paths are relative, so the build works under `/lumen-relay/`.
+
+## About the game
+
+An original, self-contained isometric browser adventure about sharing light. A small porcelain keeper restores six floating gardens: carrying sparks, aligning prisms, timing gentle pulses, awakening flowers, and joining paired wind chimes. The Russian-language UI and all art/audio are local and procedural.
+
+No accounts, backend, analytics, third-party assets, runtime CDN requests, or personal information.
 
 ## Controls
 
@@ -119,3 +131,8 @@ The keeper is constrained by island edges and inactive bridges. Relays, sources,
 ## Development
 
 Created as an AI-assisted browser-game experiment with Rumi under Danil Volodin’s direction. The initial build was developed, played through and refined during an eight-hour session. Runtime assets are generated locally in code. The interface is currently in Russian; this documentation is in English.
+
+
+## License
+
+[MIT](LICENSE) © 2026 Danil Volodin.
