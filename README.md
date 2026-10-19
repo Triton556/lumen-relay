@@ -4,7 +4,7 @@ A cozy light-puzzle adventure in six overgrown floating gardens.
 
 <!-- Gameplay hero pending: capture 10–15 seconds from the actual game in docs/media/ when a browser is available. -->
 
-[Live demo](https://triton556.github.io/lumen-relay/) — deployment pending; this URL becomes available after the Pages workflow is enabled and completes.
+[Live demo](https://triton556.github.io/lumen-relay/)
 
 **Stack:** JavaScript · Canvas 2D · Web Audio · HTML · CSS · Node.js development tools
 
@@ -24,7 +24,7 @@ npm test
 - Dev serves `dist/` at http://127.0.0.1:4173 and binds only the local loopback interface. In an environment where command sessions have isolated loopback networks, run the server in the browser's own supported environment.
 - Tests include deterministic routes, storage/lifecycle checks, rendering geometry, audio lifecycle, timing invariants, and seeded randomized actions.
 - Deploy `dist/` as a static website. No runtime package installation is needed.
-- The Pages workflow builds and tests on pushes to `main` or manual dispatch. After pushing, select **GitHub Actions** as the Pages source in repository settings. Deployment is not enabled by this documentation change.
+- GitHub Pages deploys automatically: the workflow tests, builds and publishes `dist/` on every push to `main`.
 - HTML, stylesheet and module paths are relative, so the build works under `/lumen-relay/`.
 
 ## About the game
